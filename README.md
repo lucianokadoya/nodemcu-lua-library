@@ -118,6 +118,8 @@ fact = meccano.fact_create("my_channel", 1, 100)
 meccano.fact_send(fact)
 ```
 
-*** NOTE: There is no persistence for the facts in this first version, which means that the client operates only in on-line mode ***
+***
+NOTE: There is no persistence for the facts in this first version, which means that the client operates only in on-line mode
+***
 
 If there is no wifi connection available, the data will be persisted to the local database. When there is another data sent to the gateway, if the connection is restablished, local stored data will be sent to the gateway automatically.
