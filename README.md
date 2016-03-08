@@ -67,8 +67,8 @@ local meccano = require("meccano")
 -- Contact the Meccano Network
 res = meccano.setup("ssid", "passwd", "meccano.server.iot", 80)
 
--- Read the ADC port
-print("Hook for buttons...")
+-- Main code
+print("Hook for your code...")
 tmr.alarm(1, 100, 1,
   function()
     -- Your program here
