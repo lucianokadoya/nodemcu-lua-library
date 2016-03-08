@@ -12,7 +12,7 @@ TOKEN = ""
 ---  Setup of the device
 ---
 function setup(ssid, password, server, port)
-    printa
+    print("")
     print("Meccano IoT")
     print("(c) 2016 - Lua Micro Client")
     print("")
