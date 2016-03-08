@@ -199,7 +199,7 @@ end
 --- Processing Messages
 ---
 function messages_process()
-    if(DEBUG) then print("Processing messages...") end
+    if DEBUG then print("Processing messages...") end
     connout = nil
     connout = net.createConnection(net.TCP, 0)
     connout:on("receive", function(connout, payloadout)
