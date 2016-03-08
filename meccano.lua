@@ -12,7 +12,7 @@ TOKEN = ""
 ---  Setup of the device
 ---
 function setup(ssid, password, server, port)
-    print("")
+    printa
     print("Meccano IoT")
     print("(c) 2016 - Lua Micro Client")
     print("")
@@ -199,7 +199,7 @@ end
 --- Processing Messages
 ---
 function messages_process()
-    print("Processing messages...")
+    if(DEBUG) then print("Processing messages...") end
     connout = nil
     connout = net.createConnection(net.TCP, 0)
     connout:on("receive", function(connout, payloadout)
