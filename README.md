@@ -84,7 +84,7 @@ end)
 
 #### Setup functions ####
 
-##### void setup(ssid, password, server, port) #####
+##### void setup(ssid, ssid_password, server, port) #####
 
 The setup() will do the following functions:
 
@@ -104,12 +104,12 @@ meccano.setup("ssid", "passwd", "meccano.server.iot", 80)
 Facts are the representation of a physical event. They are data captured by the sensors of Meccano Mini Board. It can be a temperature sensor, a line infrared or PIR sensor or others. The data of a fact is represented by a numeric value. Examples: for a temperature sensor it should be a number between -100 and 100 representing the celsius measure, or if you create a button it can be the number of times which it has been pressed by the user.
 
 
-##### String fact_create(String channel, int sensor, int value); #####
+##### fact_create(channel, sensor, value) #####
 
 When you create a fact, you must specify a channel. The channel is a class that identify which kind of information you want to send to the meccano gateway. Besides the channel, each fact must specify the sensor. You must define a number for each sensor connected to your meccano mini board. Let's consider, for example, that you have a PIR sensor connected in one port and a temperature sensor in other port. for identification, you should consider the PIR as sensor 1 and temperature as sensor 2. If you have several identical appliances which the same configuration, you must keep the same configuration of sensor for all devices. The value of the sensor is the data captured of them. This can be a value of temperature, a voltage or whatever you need to collect.
 
 
-##### boolean fact_send(String fact) #####
+##### fact_send(String fact) #####
 
 Send a fact to the meccano gateway.
 
@@ -121,5 +121,3 @@ meccano.fact_send(fact)
 ***
 NOTE: There is no persistence for the facts in this first version, which means that the client operates only in on-line mode
 ***
-
-If there is no wifi connection available, the data will be persisted to the local database. When there is another data sent to the gateway, if the connection is restablished, local stored data will be sent to the gateway automatically.
