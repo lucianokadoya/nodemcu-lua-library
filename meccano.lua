@@ -126,7 +126,6 @@ function clock_setup()
         connout:send(envelope)
     end)
     connout:on("disconnection", function(connout, payloadout)
-        print("Ending connection...")
         connout:close()
         collectgarbage()
     end)
@@ -200,7 +199,7 @@ end
 ---
 function messages_process()
     if DEBUG then print("Processing messages...") end
-    connout = nil
+    connout = nil 
     connout = net.createConnection(net.TCP, 0)
     connout:on("receive", function(connout, payloadout)
         if DEBUG then print(payloadout) end
