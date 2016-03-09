@@ -70,7 +70,7 @@ function register()
             .. "Host: meccano-iot.cyclops.zone\r\n"
             .. "Connection: close\r\n"
             .. "Accept: text/plain\r\n"
-            .. "User-Agent: Meccano (compatible; esp8266 Lua; Windows NT 5.1)\r\n"
+            .. "User-Agent: Meccano-IoT (nodemcu)\r\n"
             .. "Authorization: "
             .. TOKEN
             .. "\r\n"
@@ -116,7 +116,7 @@ function clock_setup()
             .. "Connection: close\r\n"
             .. "Content-Type: application/json\r\n"
             .. "Accept: text/plain\r\n"
-            .. "User-Agent: Meccano (compatible; esp8266 Lua; Windows NT 5.1)\r\n"
+            .. "User-Agent: Meccano-IoT (nodemcu)\r\n"
             .. "Authorization: "
             .. TOKEN
             .. "\r\n"
@@ -178,6 +178,7 @@ function fact_send(fact)
             .. "Connection: close\r\n"
             .. "Content-Type: application/json\r\n"
             .. "Accept: text/plain\r\n"
+            .. "User-Agent: Meccano-IoT (nodemcu)\r\n"
             .. "Authorization: " .. TOKEN .. "\r\n"
             .. "Content-Length: " .. string.len(afact) .. "\r\n"
             .. "\r\n"
@@ -199,7 +200,7 @@ end
 ---
 function messages_process()
     if DEBUG then print("Processing messages...") end
-    connout = nil 
+    connout = nil
     connout = net.createConnection(net.TCP, 0)
     connout:on("receive", function(connout, payloadout)
         if DEBUG then print(payloadout) end
@@ -230,7 +231,7 @@ function messages_process()
             .. "Connection: close\r\n"
             .. "Content-Type: application/json\r\n"
             .. "Accept: text/plain\r\n"
-            .. "User-Agent: Meccano (compatible; esp8266 Lua; Windows NT 5.1)\r\n"
+            .. "User-Agent: Meccano-IoT (nodemcu)\r\n"
             .. "Authorization: "
             .. TOKEN
             .. "\r\n"
