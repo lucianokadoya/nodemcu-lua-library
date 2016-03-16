@@ -58,24 +58,24 @@ http://www.nodemcu.com
 You need to include the meccano library in your code:
 
 ```
+-- Include meccano module
 local meccano = require("meccano")
 
----
---- Sample code
----
-
 -- Contact the Meccano Network
-res = meccano.setup("ssid", "passwd", "meccano.server.iot", 80)
+meccano.setup("ssid", "ssid_password", "meccano-gateway-host", 80, function()
+  -- Your main program
+  print("My hook...")
+  tmr.alarm(1, 100, 1,
+    function()
+      -- Your program here
+      -- read gpio, adc port and so on
 
--- Main code
-print("Hook for your code...")
-tmr.alarm(1, 100, 1,
-  function()
-    -- Your program here
-    -- ...
-    -- If you need to construct and send a fact
-    fact = meccano.fact_create("my_channel", 1, 100)
-    meccano.fact_send(fact, MODE_PERSISTENT)
+      -- If you need to create and send a fact
+      fact = meccano.fact_create("feedback", 1, 100)
+      meccano.fact_send(fact, function()
+        print("Data successfuly sent!")
+      end)
+  end)
 end)
 ```
 
@@ -84,7 +84,7 @@ end)
 
 #### Setup functions ####
 
-##### void setup(ssid, ssid_password, server, port) #####
+##### void setup(ssid, ssid_password, server, port, userfn) #####
 
 The setup() will do the following functions:
 
@@ -95,7 +95,10 @@ The setup() will do the following functions:
 5. It will get the clock information.
 
 ```
-meccano.setup("ssid", "passwd", "meccano.server.iot", 80)
+meccano.setup("ssid", "passwd", "meccano.server.iot", 80, function()
+  print("Connected to meccano network!")
+  -- My program here
+end)
 ```
 
 
@@ -109,13 +112,15 @@ Facts are the representation of a physical event. They are data captured by the 
 When you create a fact, you must specify a channel. The channel is a class that identify which kind of information you want to send to the meccano gateway. Besides the channel, each fact must specify the sensor. You must define a number for each sensor connected to your meccano mini board. Let's consider, for example, that you have a PIR sensor connected in one port and a temperature sensor in other port. for identification, you should consider the PIR as sensor 1 and temperature as sensor 2. If you have several identical appliances which the same configuration, you must keep the same configuration of sensor for all devices. The value of the sensor is the data captured of them. This can be a value of temperature, a voltage or whatever you need to collect.
 
 
-##### fact_send(String fact) #####
+##### fact_send(String fact, userfn) #####
 
 Send a fact to the meccano gateway.
 
 ```
 fact = meccano.fact_create("my_channel", 1, 100)
-meccano.fact_send(fact)
+meccano.fact_send(fact, function()
+  print("Data sent to meccano network!")
+end)
 ```
 
 ***

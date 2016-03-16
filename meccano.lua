@@ -1,3 +1,19 @@
+-- Meccano IOT - NodeMCU / Lua Library
+--
+--
+-- This program is free software: you can redistribute it and/or modify
+-- it under the terms of the GNU General Public License as published by
+-- the Free Software Foundation, either version 3 of the License, or
+-- (at your option) any later version.
+--
+-- This program is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-- GNU General Public License for more details.
+--
+-- You should have received a copy of the GNU General Public License
+-- along with this program.  If not, see <http://www.gnu.org/licenses/>.
+--
 DEBUG = nil
 SSID_ID = ""
 SSID_PW = ""
@@ -11,7 +27,7 @@ TOKEN = ""
 ---
 ---  Setup of the device
 ---
-function setup(ssid, password, server, port)
+function setup(ssid, password, server, port, userfn)
     print("")
     print("Meccano IoT")
     print("(c) 2016 - Lua Micro Client")
@@ -30,18 +46,14 @@ function setup(ssid, password, server, port)
     HOST = server
     PORT = port
     -- Register device
-    register()
-    --
-    print("Installing handler for messages...")
-    tmr.alarm(0, 30000, 1, function() messages_process() end)
-    print("Ready in a few seconds...")
+    register(userfn)
     return 1
 end
 
 ---
 --- Register the device
 ---
-function register()
+function register(userfn)
     print("Registering device...")
     connout = nil
     connout = net.createConnection(net.TCP, 0)
@@ -64,24 +76,25 @@ function register()
         clock_setup()
     end)
     connout:on("connection", function(connout, payloadout)
-        envelope = "PUT /api/gateway/"
-            .. DEVICE_ID
-            .. " HTTP/1.1\r\n"
+        envelope = "PUT /api/gateway/" .. DEVICE_ID .. " HTTP/1.1\r\n"
             .. "Host: meccano-iot.cyclops.zone\r\n"
             .. "Connection: close\r\n"
             .. "Accept: text/plain\r\n"
-            .. "User-Agent: Meccano (compatible; esp8266 Lua; Windows NT 5.1)\r\n"
-            .. "Authorization: "
-            .. TOKEN
+            .. "User-Agent: Meccano-IoT (nodemcu)\r\n"
+            .. "Content-Length: 0\r\n"
             .. "\r\n"
-            .. "\r\n"
-            .. "{ 'type' : 'nodemcu'}"
         if DEBUG then print(envelope) end
         connout:send(envelope)
     end)
     connout:on("disconnection", function(connout, payloadout)
         connout:close()
         collectgarbage()
+        --
+        print("Installing handler for messages...")
+        tmr.alarm(0, 30000, 1, function() messages_process() end)
+        print("Ready in a few seconds...")
+        -- Execute the user function
+        userfn()
     end)
     connout:connect(PORT,HOST)
 end
@@ -116,17 +129,15 @@ function clock_setup()
             .. "Connection: close\r\n"
             .. "Content-Type: application/json\r\n"
             .. "Accept: text/plain\r\n"
-            .. "User-Agent: Meccano (compatible; esp8266 Lua; Windows NT 5.1)\r\n"
+            .. "User-Agent: Meccano-IoT (nodemcu)\r\n"
             .. "Authorization: "
             .. TOKEN
             .. "\r\n"
             .. "\r\n"
-            .. "{ 'type' : 'nodemcu'}"
         if DEBUG then print(envelope) end
         connout:send(envelope)
     end)
     connout:on("disconnection", function(connout, payloadout)
-        print("Ending connection...")
         connout:close()
         collectgarbage()
     end)
@@ -159,7 +170,7 @@ end
 ---
 --- Send fact
 ---
-function fact_send(fact)
+function fact_send(fact, userfn)
     print("Sending fact...")
     connout = nil
     connout = net.createConnection(net.TCP, 0)
@@ -179,6 +190,7 @@ function fact_send(fact)
             .. "Connection: close\r\n"
             .. "Content-Type: application/json\r\n"
             .. "Accept: text/plain\r\n"
+            .. "User-Agent: Meccano-IoT (nodemcu)\r\n"
             .. "Authorization: " .. TOKEN .. "\r\n"
             .. "Content-Length: " .. string.len(afact) .. "\r\n"
             .. "\r\n"
@@ -190,6 +202,8 @@ function fact_send(fact)
     connout:on("disconnection", function(connout, payloadout)
         connout:close()
         collectgarbage()
+        -- Executes the user code
+        userfn()
     end)
     connout:connect(PORT, HOST)
 end
@@ -231,12 +245,11 @@ function messages_process()
             .. "Connection: close\r\n"
             .. "Content-Type: application/json\r\n"
             .. "Accept: text/plain\r\n"
-            .. "User-Agent: Meccano (compatible; esp8266 Lua; Windows NT 5.1)\r\n"
+            .. "User-Agent: Meccano-IoT (nodemcu)\r\n"
             .. "Authorization: "
             .. TOKEN
             .. "\r\n"
             .. "\r\n"
-            .. "{ 'type' : 'nodemcu'}"
         if DEBUG then print(envelope) end
         connout:send(envelope)
     end)
