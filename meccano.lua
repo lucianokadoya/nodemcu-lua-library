@@ -1,3 +1,19 @@
+-- Meccano IOT - NodeMCU / Lua Library
+--
+--
+-- This program is free software: you can redistribute it and/or modify
+-- it under the terms of the GNU General Public License as published by
+-- the Free Software Foundation, either version 3 of the License, or
+-- (at your option) any later version.
+--
+-- This program is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-- GNU General Public License for more details.
+--
+-- You should have received a copy of the GNU General Public License
+-- along with this program.  If not, see <http://www.gnu.org/licenses/>.
+--
 DEBUG = nil
 SSID_ID = ""
 SSID_PW = ""
@@ -64,18 +80,13 @@ function register()
         clock_setup()
     end)
     connout:on("connection", function(connout, payloadout)
-        envelope = "PUT /api/gateway/"
-            .. DEVICE_ID
-            .. " HTTP/1.1\r\n"
+        envelope = "PUT /api/gateway/" .. DEVICE_ID .. " HTTP/1.1\r\n"
             .. "Host: meccano-iot.cyclops.zone\r\n"
             .. "Connection: close\r\n"
             .. "Accept: text/plain\r\n"
             .. "User-Agent: Meccano-IoT (nodemcu)\r\n"
-            .. "Authorization: "
-            .. TOKEN
+            .. "Content-Length: 0\r\n"
             .. "\r\n"
-            .. "\r\n"
-            .. "{ 'type' : 'nodemcu'}"
         if DEBUG then print(envelope) end
         connout:send(envelope)
     end)
@@ -121,7 +132,6 @@ function clock_setup()
             .. TOKEN
             .. "\r\n"
             .. "\r\n"
-            .. "{ 'type' : 'nodemcu'}"
         if DEBUG then print(envelope) end
         connout:send(envelope)
     end)
@@ -236,7 +246,6 @@ function messages_process()
             .. TOKEN
             .. "\r\n"
             .. "\r\n"
-            .. "{ 'type' : 'nodemcu'}"
         if DEBUG then print(envelope) end
         connout:send(envelope)
     end)
