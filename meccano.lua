@@ -27,7 +27,7 @@ TOKEN = ""
 ---
 ---  Setup of the device
 ---
-function setup(ssid, password, server, port)
+function setup(ssid, password, server, port, userfn)
     print("")
     print("Meccano IoT")
     print("(c) 2016 - Lua Micro Client")
@@ -46,18 +46,14 @@ function setup(ssid, password, server, port)
     HOST = server
     PORT = port
     -- Register device
-    register()
-    --
-    print("Installing handler for messages...")
-    tmr.alarm(0, 30000, 1, function() messages_process() end)
-    print("Ready in a few seconds...")
+    register(userfn)
     return 1
 end
 
 ---
 --- Register the device
 ---
-function register()
+function register(userfn)
     print("Registering device...")
     connout = nil
     connout = net.createConnection(net.TCP, 0)
@@ -93,6 +89,12 @@ function register()
     connout:on("disconnection", function(connout, payloadout)
         connout:close()
         collectgarbage()
+        --
+        print("Installing handler for messages...")
+        tmr.alarm(0, 30000, 1, function() messages_process() end)
+        print("Ready in a few seconds...")
+        -- Execute the user function
+        userfn()
     end)
     connout:connect(PORT,HOST)
 end
@@ -168,7 +170,7 @@ end
 ---
 --- Send fact
 ---
-function fact_send(fact)
+function fact_send(fact, userfn)
     print("Sending fact...")
     connout = nil
     connout = net.createConnection(net.TCP, 0)
@@ -200,6 +202,8 @@ function fact_send(fact)
     connout:on("disconnection", function(connout, payloadout)
         connout:close()
         collectgarbage()
+        -- Executes the user code
+        userfn()
     end)
     connout:connect(PORT, HOST)
 end
